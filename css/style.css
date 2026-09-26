@@ -612,6 +612,106 @@ body {
         rgba(255, 255, 255, 0.24);
 }
 
+/* =========================================
+   COUNTDOWN
+========================================= */
+
+.countdown {
+    width: min(650px, 100%);
+
+    margin:
+        45px auto 10px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 15px;
+}
+
+
+.countdown-item {
+    padding:
+        18px 10px;
+
+    border:
+        1px solid rgba(109, 35, 56, 0.20);
+
+    background:
+        rgba(255, 255, 255, 0.18);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.countdown-number {
+    font-family:
+        'Cormorant Garamond',
+        serif;
+
+    font-size:
+        clamp(32px, 7vw, 48px);
+
+    font-weight: 500;
+
+    line-height: 1;
+
+    color:
+        var(--burgundy);
+}
+
+
+.countdown-label {
+    margin-top: 8px;
+
+    font-size: 7px;
+
+    letter-spacing: 2px;
+
+    color:
+        rgba(109, 35, 56, 0.65);
+}
+
+
+/* =========================================
+   COUNTDOWN MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .countdown {
+        gap: 8px;
+
+        margin:
+            35px auto 5px;
+    }
+
+
+    .countdown-item {
+        padding:
+            15px 5px;
+    }
+
+
+    .countdown-number {
+        font-size: 30px;
+    }
+
+
+    .countdown-label {
+        font-size: 6px;
+
+        letter-spacing: 1.5px;
+    }
+
+}
 
 /* =========================================
    DETAIL CARD LABEL
