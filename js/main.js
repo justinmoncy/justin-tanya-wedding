@@ -2,10 +2,17 @@
    ELEMENTS
 ========================================= */
 
-const video = document.getElementById("heroVideo");
-const soundButton = document.getElementById("soundButton");
-const soundIcon = document.getElementById("soundIcon");
-const heroContent = document.getElementById("heroContent");
+const video =
+    document.getElementById("heroVideo");
+
+const soundButton =
+    document.getElementById("soundButton");
+
+const soundIcon =
+    document.getElementById("soundIcon");
+
+const heroContent =
+    document.getElementById("heroContent");
 
 
 /* =========================================
@@ -27,22 +34,18 @@ const LOOP_DURATION = 30;
    VIDEO READY
 ========================================= */
 
-/*
-    The poster image is visible immediately.
-
-    Once the video has enough data to play,
-    the "video-ready" class is added.
-
-    CSS then fades the video in over the poster.
-*/
-
 if (video) {
 
-    video.addEventListener("canplay", function () {
+    video.addEventListener(
+        "canplay",
+        function () {
 
-        video.classList.add("video-ready");
+            video.classList.add(
+                "video-ready"
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -50,13 +53,6 @@ if (video) {
 /* =========================================
    START VIDEO
 ========================================= */
-
-/*
-    Video starts muted.
-
-    Muted autoplay is generally allowed
-    by mobile browsers.
-*/
 
 async function startVideo() {
 
@@ -92,27 +88,25 @@ startVideo();
    30 SECOND LOOP
 ========================================= */
 
-/*
-    When the video reaches 30 seconds,
-    immediately restart from 0.
-
-    The video file itself can be longer
-    than 30 seconds.
-*/
-
 if (video) {
 
-    video.addEventListener("timeupdate", function () {
+    video.addEventListener(
+        "timeupdate",
+        function () {
 
-        if (video.currentTime >= LOOP_DURATION) {
+            if (
+                video.currentTime >=
+                LOOP_DURATION
+            ) {
 
-            video.currentTime = 0;
+                video.currentTime = 0;
 
-            video.play().catch(() => {});
+                video.play().catch(() => {});
+
+            }
 
         }
-
-    });
+    );
 
 }
 
@@ -121,68 +115,59 @@ if (video) {
    SOUND BUTTON
 ========================================= */
 
-/*
-    The guest must deliberately tap the
-    sound button to enable audio.
-
-    Scrolling will NEVER enable sound.
-*/
-
 if (soundButton) {
 
-    soundButton.addEventListener("click", async function () {
+    soundButton.addEventListener(
+        "click",
+        async function () {
 
-        if (!video) {
-            return;
-        }
+            if (!video) {
+                return;
+            }
 
 
-        /* -----------------------------
-           TURN SOUND ON
-        ----------------------------- */
+            /* -----------------------------
+               TURN SOUND ON
+            ----------------------------- */
 
-        if (video.muted) {
+            if (video.muted) {
 
-            try {
+                try {
 
-                video.muted = false;
+                    video.muted = false;
 
-                await video.play();
+                    await video.play();
+
+                }
+
+                catch (error) {
+
+                    video.muted = true;
+
+                    console.log(
+                        "Audio could not be enabled."
+                    );
+
+                }
 
             }
 
-            catch (error) {
 
-                /*
-                    If the browser refuses audio,
-                    keep the video muted.
-                */
+            /* -----------------------------
+               TURN SOUND OFF
+            ----------------------------- */
+
+            else {
 
                 video.muted = true;
 
-                console.log(
-                    "Audio could not be enabled."
-                );
-
             }
 
-        }
 
-
-        /* -----------------------------
-           TURN SOUND OFF
-        ----------------------------- */
-
-        else {
-
-            video.muted = true;
+            updateSoundButton();
 
         }
-
-
-        updateSoundButton();
-
-    });
+    );
 
 }
 
@@ -240,47 +225,53 @@ updateSoundButton();
    HERO SCROLL EFFECT
 ========================================= */
 
-/*
-    The background video remains fixed.
-
-    The hero text gradually fades away
-    and moves down as the guest scrolls.
-*/
-
 if (heroContent) {
 
-    window.addEventListener("scroll", function () {
+    window.addEventListener(
+        "scroll",
+        function () {
 
-        const scroll = window.scrollY;
+            const scroll =
+                window.scrollY;
 
-        const fadeDistance = 500;
-
-
-        let opacity =
-            1 -
-            (scroll / fadeDistance);
-
-
-        opacity = Math.max(
-            0,
-            Math.min(1, opacity)
-        );
+            const fadeDistance =
+                500;
 
 
-        const movement =
-            scroll * 0.15;
+            let opacity =
+                1 -
+                (
+                    scroll /
+                    fadeDistance
+                );
 
 
-        heroContent.style.opacity =
-            opacity;
+            opacity =
+                Math.max(
+                    0,
+                    Math.min(
+                        1,
+                        opacity
+                    )
+                );
 
 
-        heroContent.style.transform =
-            `translateY(${movement}px)`;
+            const movement =
+                scroll * 0.15;
 
-    }, {
-        passive: true
-    });
+
+            heroContent.style.opacity =
+                opacity;
+
+
+            heroContent.style.transform =
+                `translateY(${movement}px)`;
+
+        },
+        {
+            passive: true
+        }
+    );
 
 }
 
@@ -288,13 +279,6 @@ if (heroContent) {
 /* =========================================
    PAGE VISIBILITY
 ========================================= */
-
-/*
-    Pause the video when the visitor
-    leaves the page or switches apps.
-
-    Resume when they return.
-*/
 
 document.addEventListener(
     "visibilitychange",
@@ -313,14 +297,9 @@ document.addEventListener(
 
         else {
 
-            /*
-                If the video passed the
-                30-second limit while hidden,
-                restart it.
-            */
-
             if (
-                video.currentTime >= LOOP_DURATION
+                video.currentTime >=
+                LOOP_DURATION
             ) {
 
                 video.currentTime = 0;
@@ -333,4 +312,144 @@ document.addEventListener(
         }
 
     }
-)
+);
+
+
+/* =========================================
+   WEDDING COUNTDOWN
+========================================= */
+
+/*
+    Wedding date:
+    26 December 2026
+
+    The countdown uses the visitor's
+    local device time.
+*/
+
+const weddingDate =
+    new Date(
+        "2026-12-26T00:00:00"
+    ).getTime();
+
+
+function updateCountdown() {
+
+    const now =
+        new Date().getTime();
+
+
+    const distance =
+        weddingDate - now;
+
+
+    const days =
+        Math.floor(
+            distance /
+            (1000 * 60 * 60 * 24)
+        );
+
+
+    const hours =
+        Math.floor(
+            (
+                distance %
+                (1000 * 60 * 60 * 24)
+            ) /
+            (1000 * 60 * 60)
+        );
+
+
+    const minutes =
+        Math.floor(
+            (
+                distance %
+                (1000 * 60 * 60)
+            ) /
+            (1000 * 60)
+        );
+
+
+    const seconds =
+        Math.floor(
+            (
+                distance %
+                (1000 * 60)
+            ) /
+            1000
+        );
+
+
+    const daysElement =
+        document.getElementById("days");
+
+    const hoursElement =
+        document.getElementById("hours");
+
+    const minutesElement =
+        document.getElementById("minutes");
+
+    const secondsElement =
+        document.getElementById("seconds");
+
+
+    if (
+        !daysElement ||
+        !hoursElement ||
+        !minutesElement ||
+        !secondsElement
+    ) {
+
+        return;
+
+    }
+
+
+    /* -----------------------------
+       WEDDING DAY
+    ----------------------------- */
+
+    if (distance <= 0) {
+
+        daysElement.textContent = "00";
+
+        hoursElement.textContent = "00";
+
+        minutesElement.textContent = "00";
+
+        secondsElement.textContent = "00";
+
+        return;
+
+    }
+
+
+    daysElement.textContent =
+        String(days).padStart(2, "0");
+
+
+    hoursElement.textContent =
+        String(hours).padStart(2, "0");
+
+
+    minutesElement.textContent =
+        String(minutes).padStart(2, "0");
+
+
+    secondsElement.textContent =
+        String(seconds).padStart(2, "0");
+
+}
+
+
+/* Run immediately */
+
+updateCountdown();
+
+
+/* Update every second */
+
+setInterval(
+    updateCountdown,
+    1000
+);
