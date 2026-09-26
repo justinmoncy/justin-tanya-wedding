@@ -15,6 +15,7 @@ const heroContent =
     document.getElementById("heroContent");
 
 
+
 /* =========================================
    VIDEO SETTINGS
 ========================================= */
@@ -28,6 +29,7 @@ const heroContent =
 */
 
 const LOOP_DURATION = 30;
+
 
 
 /* =========================================
@@ -50,6 +52,7 @@ if (video) {
 }
 
 
+
 /* =========================================
    START VIDEO
 ========================================= */
@@ -59,6 +62,11 @@ async function startVideo() {
     if (!video) {
         return;
     }
+
+    /*
+        Mobile browsers generally require
+        autoplaying video to start muted.
+    */
 
     video.muted = true;
 
@@ -84,8 +92,9 @@ async function startVideo() {
 startVideo();
 
 
+
 /* =========================================
-   30 SECOND LOOP
+   30 SECOND VIDEO LOOP
 ========================================= */
 
 if (video) {
@@ -109,6 +118,7 @@ if (video) {
     );
 
 }
+
 
 
 /* =========================================
@@ -172,6 +182,7 @@ if (soundButton) {
 }
 
 
+
 /* =========================================
    UPDATE SOUND BUTTON
 ========================================= */
@@ -191,7 +202,8 @@ function updateSoundButton() {
 
     if (video.muted) {
 
-        soundIcon.textContent = "🔇";
+        soundIcon.textContent =
+            "🔇";
 
         soundButton.setAttribute(
             "aria-label",
@@ -202,7 +214,8 @@ function updateSoundButton() {
 
     else {
 
-        soundIcon.textContent = "🔊";
+        soundIcon.textContent =
+            "🔊";
 
         soundButton.setAttribute(
             "aria-label",
@@ -214,11 +227,13 @@ function updateSoundButton() {
 }
 
 
+
 /* =========================================
    INITIAL SOUND STATE
 ========================================= */
 
 updateSoundButton();
+
 
 
 /* =========================================
@@ -263,7 +278,6 @@ if (heroContent) {
             heroContent.style.opacity =
                 opacity;
 
-
             heroContent.style.transform =
                 `translateY(${movement}px)`;
 
@@ -274,6 +288,7 @@ if (heroContent) {
     );
 
 }
+
 
 
 /* =========================================
@@ -315,6 +330,7 @@ document.addEventListener(
 );
 
 
+
 /* =========================================
    WEDDING COUNTDOWN
 ========================================= */
@@ -323,14 +339,18 @@ document.addEventListener(
     Wedding date:
     26 December 2026
 
+    Wedding ceremony:
+    11:00 AM
+
     The countdown uses the visitor's
     local device time.
 */
 
 const weddingDate =
     new Date(
-        "2026-12-26T00:00:00"
+        "December 26, 2026 11:00:00"
     ).getTime();
+
 
 
 function updateCountdown() {
@@ -341,6 +361,59 @@ function updateCountdown() {
 
     const distance =
         weddingDate - now;
+
+
+    const daysElement =
+        document.getElementById("days");
+
+    const hoursElement =
+        document.getElementById("hours");
+
+    const minutesElement =
+        document.getElementById("minutes");
+
+    const secondsElement =
+        document.getElementById("seconds");
+
+
+    /*
+        Make sure all countdown elements
+        exist before updating them.
+    */
+
+    if (
+        !daysElement ||
+        !hoursElement ||
+        !minutesElement ||
+        !secondsElement
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+        Wedding day has arrived.
+    */
+
+    if (distance <= 0) {
+
+        daysElement.textContent =
+            "00";
+
+        hoursElement.textContent =
+            "00";
+
+        minutesElement.textContent =
+            "00";
+
+        secondsElement.textContent =
+            "00";
+
+        return;
+
+    }
 
 
     const days =
@@ -380,50 +453,6 @@ function updateCountdown() {
         );
 
 
-    const daysElement =
-        document.getElementById("days");
-
-    const hoursElement =
-        document.getElementById("hours");
-
-    const minutesElement =
-        document.getElementById("minutes");
-
-    const secondsElement =
-        document.getElementById("seconds");
-
-
-    if (
-        !daysElement ||
-        !hoursElement ||
-        !minutesElement ||
-        !secondsElement
-    ) {
-
-        return;
-
-    }
-
-
-    /* -----------------------------
-       WEDDING DAY
-    ----------------------------- */
-
-    if (distance <= 0) {
-
-        daysElement.textContent = "00";
-
-        hoursElement.textContent = "00";
-
-        minutesElement.textContent = "00";
-
-        secondsElement.textContent = "00";
-
-        return;
-
-    }
-
-
     daysElement.textContent =
         String(days).padStart(2, "0");
 
@@ -442,12 +471,17 @@ function updateCountdown() {
 }
 
 
-/* Run immediately */
+
+/* =========================================
+   START COUNTDOWN
+========================================= */
 
 updateCountdown();
 
 
-/* Update every second */
+/*
+    Update every second.
+*/
 
 setInterval(
     updateCountdown,
