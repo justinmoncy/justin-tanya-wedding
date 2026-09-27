@@ -110,51 +110,107 @@ if (soundButton && soundIcon && heroVideo) {
    COUNTDOWN
 ========================================= */
 
-const countdownDays = document.getElementById("countdownDays");
-const countdownHours = document.getElementById("countdownHours");
-const countdownMinutes = document.getElementById("countdownMinutes");
-const countdownSeconds = document.getElementById("countdownSeconds");
+const countdownDays =
+    document.getElementById("days");
+
+const countdownHours =
+    document.getElementById("hours");
+
+const countdownMinutes =
+    document.getElementById("minutes");
+
+const countdownSeconds =
+    document.getElementById("seconds");
 
 
 function updateCountdown() {
+
+    /*
+       Wedding date:
+       26 December 2026 at midnight
+    */
 
     const weddingDate = new Date(
         "December 26, 2026 00:00:00"
     ).getTime();
 
-    const now = new Date().getTime();
+    const now =
+        new Date().getTime();
 
-    const difference = weddingDate - now;
+    const difference =
+        weddingDate - now;
 
+
+    /*
+       If the wedding date has arrived,
+       keep everything at zero.
+    */
 
     if (difference <= 0) {
 
-        if (countdownDays) countdownDays.textContent = "00";
-        if (countdownHours) countdownHours.textContent = "00";
-        if (countdownMinutes) countdownMinutes.textContent = "00";
-        if (countdownSeconds) countdownSeconds.textContent = "00";
+        if (countdownDays) {
+
+            countdownDays.textContent = "00";
+
+        }
+
+        if (countdownHours) {
+
+            countdownHours.textContent = "00";
+
+        }
+
+        if (countdownMinutes) {
+
+            countdownMinutes.textContent = "00";
+
+        }
+
+        if (countdownSeconds) {
+
+            countdownSeconds.textContent = "00";
+
+        }
 
         return;
 
     }
 
 
-    const days = Math.floor(
-        difference / (1000 * 60 * 60 * 24)
-    );
+    /*
+       Calculate remaining time.
+    */
 
-    const hours = Math.floor(
-        (difference / (1000 * 60 * 60)) % 24
-    );
+    const days =
+        Math.floor(
+            difference /
+            (1000 * 60 * 60 * 24)
+        );
 
-    const minutes = Math.floor(
-        (difference / (1000 * 60)) % 60
-    );
 
-    const seconds = Math.floor(
-        (difference / 1000) % 60
-    );
+    const hours =
+        Math.floor(
+            (difference /
+                (1000 * 60 * 60)) % 24
+        );
 
+
+    const minutes =
+        Math.floor(
+            (difference /
+                (1000 * 60)) % 60
+        );
+
+
+    const seconds =
+        Math.floor(
+            (difference / 1000) % 60
+        );
+
+
+    /*
+       Update the four countdown elements.
+    */
 
     if (countdownDays) {
 
@@ -190,9 +246,22 @@ function updateCountdown() {
 }
 
 
+/*
+   Run immediately so the countdown doesn't
+   wait for the first one-second interval.
+*/
+
 updateCountdown();
 
-setInterval(updateCountdown, 1000);
+
+/*
+   Update every second.
+*/
+
+setInterval(
+    updateCountdown,
+    1000
+);
 
 
 /* =========================================
@@ -213,7 +282,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     if (entry.isIntersecting) {
 
-                        entry.target.classList.add("visible");
+                        entry.target.classList.add(
+                            "visible"
+                        );
 
                         revealObserver.unobserve(
                             entry.target
