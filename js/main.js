@@ -8,23 +8,32 @@
    BACKGROUND VIDEO
 ========================================= */
 
-const heroVideo = document.getElementById("heroVideo");
+const heroVideo =
+    document.getElementById("heroVideo");
+
 
 if (heroVideo) {
 
     const VIDEO_LOOP_TIME = 30;
 
-    heroVideo.addEventListener("timeupdate", () => {
 
-        if (heroVideo.currentTime >= VIDEO_LOOP_TIME) {
+    heroVideo.addEventListener(
+        "timeupdate",
+        () => {
 
-            heroVideo.currentTime = 0;
+            if (
+                heroVideo.currentTime >=
+                VIDEO_LOOP_TIME
+            ) {
 
-            heroVideo.play().catch(() => {});
+                heroVideo.currentTime = 0;
+
+                heroVideo.play().catch(() => {});
+
+            }
 
         }
-
-    });
+    );
 
 }
 
@@ -33,19 +42,28 @@ if (heroVideo) {
    SOUND BUTTON
 ========================================= */
 
-const soundButton = document.getElementById("soundButton");
-const soundIcon = document.getElementById("soundIcon");
+const soundButton =
+    document.getElementById("soundButton");
 
-if (soundButton && soundIcon && heroVideo) {
+const soundIcon =
+    document.getElementById("soundIcon");
+
+
+if (
+    soundButton &&
+    soundIcon &&
+    heroVideo
+) {
 
     /*
-       Mobile browsers often block autoplay with sound.
-       Start muted so the invitation can autoplay.
+       Start muted so mobile browsers
+       can autoplay the invitation.
     */
 
     heroVideo.muted = true;
 
     soundIcon.textContent = "🔇";
+
 
     soundButton.setAttribute(
         "aria-label",
@@ -61,47 +79,49 @@ if (soundButton && soundIcon && heroVideo) {
 
 
     /*
-       Toggle sound when button is tapped.
+       Toggle sound.
        Once unmuted, the button becomes compact.
     */
 
-    soundButton.addEventListener("click", () => {
+    soundButton.addEventListener(
+        "click",
+        () => {
 
-        if (heroVideo.muted) {
+            if (heroVideo.muted) {
 
-            heroVideo.muted = false;
+                heroVideo.muted = false;
 
-            soundIcon.textContent = "🔊";
+                soundIcon.textContent = "🔊";
 
-            soundButton.classList.add("compact");
-
-            soundButton.setAttribute(
-                "aria-label",
-                "Mute wedding music"
-            );
+                soundButton.classList.add(
+                    "compact"
+                );
 
 
-            /*
-               Some mobile browsers pause the video
-               when audio permission is granted.
-            */
+                soundButton.setAttribute(
+                    "aria-label",
+                    "Mute wedding music"
+                );
 
-            heroVideo.play().catch(() => {});
 
-        } else {
+                heroVideo.play().catch(() => {});
 
-            heroVideo.muted = true;
+            } else {
 
-            soundIcon.textContent = "🔇";
+                heroVideo.muted = true;
 
-            soundButton.setAttribute(
-                "aria-label",
-                "Turn wedding music on"
-            );
+                soundIcon.textContent = "🔇";
+
+
+                soundButton.setAttribute(
+                    "aria-label",
+                    "Turn wedding music on"
+                );
+
+            }
 
         }
-
-    });
+    );
 
 }
 
@@ -127,50 +147,60 @@ function updateCountdown() {
 
     /*
        Wedding date:
-       26 December 2026 at midnight
+       26 December 2026 at midnight.
     */
 
-    const weddingDate = new Date(
-        "December 26, 2026 00:00:00"
-    ).getTime();
+    const weddingDate =
+        new Date(
+            "December 26, 2026 00:00:00"
+        ).getTime();
+
 
     const now =
         new Date().getTime();
+
 
     const difference =
         weddingDate - now;
 
 
     /*
-       If the wedding date has arrived,
-       keep everything at zero.
+       Wedding day has arrived.
     */
 
     if (difference <= 0) {
 
         if (countdownDays) {
 
-            countdownDays.textContent = "00";
+            countdownDays.textContent =
+                "00";
 
         }
+
 
         if (countdownHours) {
 
-            countdownHours.textContent = "00";
+            countdownHours.textContent =
+                "00";
 
         }
+
 
         if (countdownMinutes) {
 
-            countdownMinutes.textContent = "00";
+            countdownMinutes.textContent =
+                "00";
 
         }
+
 
         if (countdownSeconds) {
 
-            countdownSeconds.textContent = "00";
+            countdownSeconds.textContent =
+                "00";
 
         }
+
 
         return;
 
@@ -190,32 +220,42 @@ function updateCountdown() {
 
     const hours =
         Math.floor(
-            (difference /
-                (1000 * 60 * 60)) % 24
+            (
+                difference /
+                (1000 * 60 * 60)
+            ) % 24
         );
 
 
     const minutes =
         Math.floor(
-            (difference /
-                (1000 * 60)) % 60
+            (
+                difference /
+                (1000 * 60)
+            ) % 60
         );
 
 
     const seconds =
         Math.floor(
-            (difference / 1000) % 60
+            (
+                difference /
+                1000
+            ) % 60
         );
 
 
     /*
-       Update the four countdown elements.
+       Update countdown.
     */
 
     if (countdownDays) {
 
         countdownDays.textContent =
-            String(days).padStart(2, "0");
+            String(days).padStart(
+                2,
+                "0"
+            );
 
     }
 
@@ -223,7 +263,10 @@ function updateCountdown() {
     if (countdownHours) {
 
         countdownHours.textContent =
-            String(hours).padStart(2, "0");
+            String(hours).padStart(
+                2,
+                "0"
+            );
 
     }
 
@@ -231,7 +274,10 @@ function updateCountdown() {
     if (countdownMinutes) {
 
         countdownMinutes.textContent =
-            String(minutes).padStart(2, "0");
+            String(minutes).padStart(
+                2,
+                "0"
+            );
 
     }
 
@@ -239,7 +285,10 @@ function updateCountdown() {
     if (countdownSeconds) {
 
         countdownSeconds.textContent =
-            String(seconds).padStart(2, "0");
+            String(seconds).padStart(
+                2,
+                "0"
+            );
 
     }
 
@@ -247,8 +296,7 @@ function updateCountdown() {
 
 
 /*
-   Run immediately so the countdown doesn't
-   wait for the first one-second interval.
+   Run immediately.
 */
 
 updateCountdown();
@@ -268,92 +316,119 @@ setInterval(
    SCROLL REVEALS
 ========================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    const revealElements =
-        document.querySelectorAll(".reveal");
+        const revealElements =
+            document.querySelectorAll(
+                ".reveal"
+            );
 
 
-    const revealObserver =
-        new IntersectionObserver(
-            entries => {
+        const revealObserver =
+            new IntersectionObserver(
+                entries => {
 
-                entries.forEach(entry => {
+                    entries.forEach(
+                        entry => {
 
-                    if (entry.isIntersecting) {
+                            if (
+                                entry.isIntersecting
+                            ) {
 
-                        entry.target.classList.add(
-                            "visible"
-                        );
+                                entry.target.classList.add(
+                                    "visible"
+                                );
 
-                        revealObserver.unobserve(
-                            entry.target
-                        );
 
-                    }
+                                revealObserver.unobserve(
+                                    entry.target
+                                );
 
-                });
+                            }
 
-            },
-            {
-                threshold: 0.15,
-                rootMargin: "0px 0px -50px 0px"
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.15,
+
+                    rootMargin:
+                        "0px 0px -50px 0px"
+                }
+            );
+
+
+        revealElements.forEach(
+            element => {
+
+                revealObserver.observe(
+                    element
+                );
+
             }
         );
 
 
-    revealElements.forEach(element => {
+        /* =====================================
+           STORY SIDE REVEALS
+        ===================================== */
 
-        revealObserver.observe(element);
-
-    });
-
-
-    /* =====================================
-       STORY SIDE REVEALS
-    ===================================== */
-
-    const storyRevealElements =
-        document.querySelectorAll(
-            ".story-reveal-right, .story-reveal-left"
-        );
+        const storyRevealElements =
+            document.querySelectorAll(
+                ".story-reveal-right, .story-reveal-left"
+            );
 
 
-    const storyRevealObserver =
-        new IntersectionObserver(
-            entries => {
+        const storyRevealObserver =
+            new IntersectionObserver(
+                entries => {
 
-                entries.forEach(entry => {
+                    entries.forEach(
+                        entry => {
 
-                    if (entry.isIntersecting) {
+                            if (
+                                entry.isIntersecting
+                            ) {
 
-                        entry.target.classList.add(
-                            "visible"
-                        );
+                                entry.target.classList.add(
+                                    "visible"
+                                );
 
-                        storyRevealObserver.unobserve(
-                            entry.target
-                        );
 
-                    }
+                                storyRevealObserver.unobserve(
+                                    entry.target
+                                );
 
-                });
+                            }
 
-            },
-            {
-                threshold: 0.18,
-                rootMargin: "0px 0px -50px 0px"
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.18,
+
+                    rootMargin:
+                        "0px 0px -50px 0px"
+                }
+            );
+
+
+        storyRevealElements.forEach(
+            element => {
+
+                storyRevealObserver.observe(
+                    element
+                );
+
             }
         );
 
-
-    storyRevealElements.forEach(element => {
-
-        storyRevealObserver.observe(element);
-
-    });
-
-});
+    }
+);
 
 
 /* =========================================
@@ -361,25 +436,48 @@ document.addEventListener("DOMContentLoaded", () => {
 ========================================= */
 
 const rsvpModal =
-    document.getElementById("rsvpModal");
+    document.getElementById(
+        "rsvpModal"
+    );
+
 
 const rsvpOpenButton =
-    document.getElementById("rsvpOpenButton");
+    document.getElementById(
+        "rsvpOpenButton"
+    );
+
 
 const rsvpCloseButton =
-    document.getElementById("rsvpCloseButton");
+    document.getElementById(
+        "rsvpCloseButton"
+    );
+
 
 const rsvpBackdrop =
-    document.querySelector(".rsvp-modal-backdrop");
+    document.querySelector(
+        ".rsvp-modal-backdrop"
+    );
 
 
 function openRsvpModal() {
 
     if (!rsvpModal) return;
 
-    rsvpModal.classList.add("active");
 
-    document.body.classList.add("rsvp-open");
+    rsvpModal.classList.add(
+        "active"
+    );
+
+
+    rsvpModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.classList.add(
+        "rsvp-open"
+    );
 
 }
 
@@ -388,9 +486,21 @@ function closeRsvpModal() {
 
     if (!rsvpModal) return;
 
-    rsvpModal.classList.remove("active");
 
-    document.body.classList.remove("rsvp-open");
+    rsvpModal.classList.remove(
+        "active"
+    );
+
+
+    rsvpModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    document.body.classList.remove(
+        "rsvp-open"
+    );
 
 }
 
@@ -425,19 +535,24 @@ if (rsvpBackdrop) {
 }
 
 
-document.addEventListener("keydown", event => {
+document.addEventListener(
+    "keydown",
+    event => {
 
-    if (
-        event.key === "Escape" &&
-        rsvpModal &&
-        rsvpModal.classList.contains("active")
-    ) {
+        if (
+            event.key === "Escape" &&
+            rsvpModal &&
+            rsvpModal.classList.contains(
+                "active"
+            )
+        ) {
 
-        closeRsvpModal();
+            closeRsvpModal();
+
+        }
 
     }
-
-});
+);
 
 
 /* =========================================
@@ -445,15 +560,154 @@ document.addEventListener("keydown", event => {
 ========================================= */
 
 const rsvpForm =
-    document.getElementById("rsvpForm");
+    document.getElementById(
+        "rsvpForm"
+    );
+
 
 const rsvpStatus =
-    document.getElementById("rsvpStatus");
+    document.getElementById(
+        "rsvpStatus"
+    );
+
+
+const rsvpAttendance =
+    document.getElementById(
+        "rsvpAttendance"
+    );
+
+
+const rsvpAdditionalFields =
+    document.getElementById(
+        "rsvpAdditionalFields"
+    );
+
+
+const rsvpGuests =
+    document.getElementById(
+        "rsvpGuests"
+    );
+
+
+const rsvpMeal =
+    document.getElementById(
+        "rsvpMeal"
+    );
 
 
 const RSVP_ENDPOINT =
     "https://script.google.com/macros/s/AKfycbyTcbqx2W1-inn8V0RXrtRIsxA_NvldqbI_SpB87pv1YmwGd4jaY70Sq2wNr-ZoZMKTTw/exec";
 
+
+/* =========================================
+   RSVP FIELD VISIBILITY
+========================================= */
+
+function updateRsvpFields() {
+
+    if (
+        !rsvpAttendance ||
+        !rsvpAdditionalFields
+    ) {
+
+        return;
+
+    }
+
+
+    /*
+       ACCEPTING:
+       Show guest count and meal preference.
+    */
+
+    if (
+        rsvpAttendance.value ===
+        "Joyfully accepting"
+    ) {
+
+        rsvpAdditionalFields.hidden =
+            false;
+
+
+        /*
+           Guest count is required
+           when attending.
+        */
+
+        if (rsvpGuests) {
+
+            rsvpGuests.required =
+                true;
+
+        }
+
+
+        /*
+           Meal preference remains optional.
+        */
+
+        if (rsvpMeal) {
+
+            rsvpMeal.required =
+                false;
+
+        }
+
+    } else {
+
+        /*
+           DECLINING or no selection:
+           hide guest count and meal preference.
+        */
+
+        rsvpAdditionalFields.hidden =
+            true;
+
+
+        if (rsvpGuests) {
+
+            rsvpGuests.required =
+                false;
+
+        }
+
+
+        if (rsvpMeal) {
+
+            rsvpMeal.required =
+                false;
+
+        }
+
+    }
+
+}
+
+
+/*
+   Watch the attendance selection.
+*/
+
+if (rsvpAttendance) {
+
+    rsvpAttendance.addEventListener(
+        "change",
+        updateRsvpFields
+    );
+
+}
+
+
+/*
+   Make sure the fields start hidden.
+*/
+
+updateRsvpFields();
+
+
+/* =========================================
+   RSVP SUBMISSION
+========================================= */
 
 if (rsvpForm) {
 
@@ -473,7 +727,9 @@ if (rsvpForm) {
 
 
             const formData =
-                new FormData(rsvpForm);
+                new FormData(
+                    rsvpForm
+                );
 
 
             try {
@@ -482,7 +738,9 @@ if (rsvpForm) {
                     RSVP_ENDPOINT,
                     {
                         method: "POST",
+
                         mode: "no-cors",
+
                         body: formData
                     }
                 );
@@ -497,6 +755,14 @@ if (rsvpForm) {
 
 
                 rsvpForm.reset();
+
+
+                /*
+                   Hide the additional fields
+                   after submission.
+                */
+
+                updateRsvpFields();
 
 
             } catch (error) {
@@ -527,7 +793,9 @@ if (rsvpForm) {
 ========================================= */
 
 const officialGallery =
-    document.getElementById("officialGallery");
+    document.getElementById(
+        "officialGallery"
+    );
 
 
 const CLOUDINARY_CLOUD =
@@ -545,14 +813,10 @@ async function loadOfficialGallery() {
 
     try {
 
-        /*
-           Cloudinary resource listing endpoint
-           for the official wedding gallery.
-        */
-
-        const response = await fetch(
-            `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/list/${OFFICIAL_TAG}.json`
-        );
+        const response =
+            await fetch(
+                `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/list/${OFFICIAL_TAG}.json`
+            );
 
 
         if (!response.ok) {
@@ -585,51 +849,58 @@ async function loadOfficialGallery() {
         }
 
 
-        officialGallery.innerHTML = "";
+        officialGallery.innerHTML =
+            "";
 
 
-        resources.forEach(resource => {
+        resources.forEach(
+            resource => {
 
-            const imageUrl =
-                `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/upload/f_auto,q_auto/${resource.public_id}.${resource.format}`;
-
-
-            const button =
-                document.createElement("button");
+                const imageUrl =
+                    `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/upload/f_auto,q_auto/${resource.public_id}.${resource.format}`;
 
 
-            button.className =
-                "gallery-item";
+                const button =
+                    document.createElement(
+                        "button"
+                    );
 
 
-            button.type =
-                "button";
+                button.className =
+                    "gallery-item";
 
 
-            button.innerHTML = `
-                <img
-                    src="${imageUrl}"
-                    alt="Justin and Tanya wedding photo"
-                    loading="lazy"
-                >
-            `;
+                button.type =
+                    "button";
 
 
-            button.addEventListener(
-                "click",
-                () => {
+                button.innerHTML = `
+                    <img
+                        src="${imageUrl}"
+                        alt="Justin and Tanya wedding photo"
+                        loading="lazy"
+                    >
+                `;
 
-                    openLightbox(imageUrl);
 
-                }
-            );
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openLightbox(
+                            imageUrl
+                        );
+
+                    }
+                );
 
 
-            officialGallery.appendChild(
-                button
-            );
+                officialGallery.appendChild(
+                    button
+                );
 
-        });
+            }
+        );
 
 
     } catch (error) {
@@ -658,10 +929,15 @@ loadOfficialGallery();
    LIGHTBOX
 ========================================= */
 
-function openLightbox(imageUrl) {
+function openLightbox(
+    imageUrl
+) {
 
     const lightbox =
-        document.getElementById("galleryLightbox");
+        document.getElementById(
+            "galleryLightbox"
+        );
+
 
     const lightboxImage =
         document.getElementById(
@@ -669,7 +945,14 @@ function openLightbox(imageUrl) {
         );
 
 
-    if (!lightbox || !lightboxImage) return;
+    if (
+        !lightbox ||
+        !lightboxImage
+    ) {
+
+        return;
+
+    }
 
 
     lightboxImage.src =
@@ -697,7 +980,9 @@ function openLightbox(imageUrl) {
 function closeLightbox() {
 
     const lightbox =
-        document.getElementById("galleryLightbox");
+        document.getElementById(
+            "galleryLightbox"
+        );
 
 
     if (!lightbox) return;
@@ -750,7 +1035,8 @@ if (galleryLightbox) {
         event => {
 
             if (
-                event.target === galleryLightbox
+                event.target ===
+                galleryLightbox
             ) {
 
                 closeLightbox();
@@ -825,23 +1111,32 @@ if (guestUploadButton) {
             const widget =
                 cloudinary.createUploadWidget(
                     {
+
                         cloudName:
                             "deft8ujf",
+
 
                         uploadPreset:
                             "justin_tanya_wedding",
 
+
                         folder:
                             "justin-tanya-wedding/guest-photos",
+
 
                         sources: [
                             "local",
                             "camera"
                         ],
 
-                        multiple: true,
 
-                        maxFiles: 10,
+                        multiple:
+                            true,
+
+
+                        maxFiles:
+                            10,
+
 
                         clientAllowedFormats: [
                             "jpg",
@@ -852,7 +1147,11 @@ if (guestUploadButton) {
 
                     },
 
-                    (error, result) => {
+
+                    (
+                        error,
+                        result
+                    ) => {
 
                         if (error) {
 
@@ -860,6 +1159,7 @@ if (guestUploadButton) {
                                 "Cloudinary upload error:",
                                 error
                             );
+
 
                             if (uploadStatus) {
 
@@ -889,6 +1189,7 @@ if (guestUploadButton) {
                         }
 
                     }
+
                 );
 
 
