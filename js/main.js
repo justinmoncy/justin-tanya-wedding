@@ -1,43 +1,32 @@
 /* =========================================
-   WEDDING INVITATION JAVASCRIPT
-========================================= */
-
-
-/* =========================================
    BACKGROUND VIDEO
 ========================================= */
 
-const heroVideo = document.getElementById("heroVideo");
-
-const VIDEO_LOOP_POINT = 30;
+const heroVideo =
+    document.getElementById("heroVideo");
 
 
 if (heroVideo) {
 
-    heroVideo.addEventListener("canplay", function () {
+    /*
+     * The video plays from the beginning
+     * and loops after 30 seconds.
+     */
 
-        heroVideo.classList.add("video-ready");
+    heroVideo.addEventListener(
+        "timeupdate",
+        () => {
 
-        heroVideo.play().catch(function () {
-            console.log("Autoplay was blocked.");
-        });
+            if (heroVideo.currentTime >= 30) {
 
-    });
+                heroVideo.currentTime = 0;
 
+                heroVideo.play().catch(() => {});
 
-    heroVideo.addEventListener("timeupdate", function () {
-
-        if (heroVideo.currentTime >= VIDEO_LOOP_POINT) {
-
-            heroVideo.currentTime = 0;
-
-            heroVideo.play().catch(function () {
-                console.log("Video playback was blocked.");
-            });
+            }
 
         }
-
-    });
+    );
 
 }
 
@@ -55,71 +44,66 @@ const soundIcon =
 
 if (soundButton && heroVideo) {
 
-    soundButton.addEventListener("click", function () {
 
-        if (heroVideo.muted) {
+    soundButton.addEventListener(
+        "click",
+        async () => {
 
-            heroVideo.muted = false;
+            if (heroVideo.muted) {
 
-            heroVideo.play().catch(function () {});
+                heroVideo.muted = false;
 
-            soundIcon.textContent = "🔊";
+                try {
 
-            soundButton.setAttribute(
-                "aria-label",
-                "Turn wedding music off"
-            );
+                    await heroVideo.play();
 
-        } else {
+                    soundIcon.textContent = "🔊";
 
-            heroVideo.muted = true;
+                    soundButton.setAttribute(
+                        "aria-label",
+                        "Turn wedding music off"
+                    );
 
-            soundIcon.textContent = "🔇";
+                } catch (error) {
 
-            soundButton.setAttribute(
-                "aria-label",
-                "Turn wedding music on"
-            );
+                    heroVideo.muted = true;
+
+                    soundIcon.textContent = "🔇";
+
+                    soundButton.setAttribute(
+                        "aria-label",
+                        "Turn wedding music on"
+                    );
+
+                }
+
+            } else {
+
+                heroVideo.muted = true;
+
+                soundIcon.textContent = "🔇";
+
+                soundButton.setAttribute(
+                    "aria-label",
+                    "Turn wedding music on"
+                );
+
+            }
 
         }
+    );
 
-    });
+
+    /*
+     * Try autoplay first.
+     * Mobile browsers may require muted playback.
+     */
+
+    heroVideo.muted = true;
+
+    heroVideo.play().catch(() => {});
 
 }
-
-
-/* =========================================
-   HERO SCROLL FADE
-========================================= */
-
-const heroContent =
-    document.getElementById("heroContent");
-
-
-window.addEventListener("scroll", function () {
-
-    if (!heroContent) return;
-
-    const scrollY = window.scrollY;
-
-    const opacity =
-        Math.max(
-            0,
-            1 - (scrollY / (window.innerHeight * 0.75))
-        );
-
-    const translate =
-        Math.min(
-            60,
-            scrollY * 0.15
-        );
-
-    heroContent.style.opacity = opacity;
-
-    heroContent.style.transform =
-        `translateY(${translate}px)`;
-
-});
 
 
 /* =========================================
@@ -127,37 +111,56 @@ window.addEventListener("scroll", function () {
 ========================================= */
 
 const weddingDate =
-    new Date("December 26, 2026 00:00:00").getTime();
-
-
-const daysElement =
-    document.getElementById("days");
-
-const hoursElement =
-    document.getElementById("hours");
-
-const minutesElement =
-    document.getElementById("minutes");
-
-const secondsElement =
-    document.getElementById("seconds");
+    new Date("December 26, 2026 00:00:00");
 
 
 function updateCountdown() {
 
     const now =
-        new Date().getTime();
+        new Date();
 
     const difference =
-        weddingDate - now;
+        weddingDate.getTime() - now.getTime();
+
+
+    const daysElement =
+        document.getElementById("days");
+
+    const hoursElement =
+        document.getElementById("hours");
+
+    const minutesElement =
+        document.getElementById("minutes");
+
+    const secondsElement =
+        document.getElementById("seconds");
+
+
+    if (
+        !daysElement ||
+        !hoursElement ||
+        !minutesElement ||
+        !secondsElement
+    ) {
+
+        return;
+
+    }
 
 
     if (difference <= 0) {
 
-        if (daysElement) daysElement.textContent = "00";
-        if (hoursElement) hoursElement.textContent = "00";
-        if (minutesElement) minutesElement.textContent = "00";
-        if (secondsElement) secondsElement.textContent = "00";
+        daysElement.textContent =
+            "00";
+
+        hoursElement.textContent =
+            "00";
+
+        minutesElement.textContent =
+            "00";
+
+        secondsElement.textContent =
+            "00";
 
         return;
 
@@ -173,47 +176,38 @@ function updateCountdown() {
 
     const hours =
         Math.floor(
-            (difference %
-                (1000 * 60 * 60 * 24)) /
-            (1000 * 60 * 60)
+            (difference /
+                (1000 * 60 * 60)) %
+            24
         );
 
 
     const minutes =
         Math.floor(
-            (difference %
-                (1000 * 60 * 60)) /
-            (1000 * 60)
+            (difference /
+                (1000 * 60)) %
+            60
         );
 
 
     const seconds =
         Math.floor(
-            (difference %
-                (1000 * 60)) /
-            1000
+            (difference / 1000) %
+            60
         );
 
 
-    if (daysElement) {
-        daysElement.textContent =
-            String(days).padStart(2, "0");
-    }
+    daysElement.textContent =
+        String(days).padStart(2, "0");
 
-    if (hoursElement) {
-        hoursElement.textContent =
-            String(hours).padStart(2, "0");
-    }
+    hoursElement.textContent =
+        String(hours).padStart(2, "0");
 
-    if (minutesElement) {
-        minutesElement.textContent =
-            String(minutes).padStart(2, "0");
-    }
+    minutesElement.textContent =
+        String(minutes).padStart(2, "0");
 
-    if (secondsElement) {
-        secondsElement.textContent =
-            String(seconds).padStart(2, "0");
-    }
+    secondsElement.textContent =
+        String(seconds).padStart(2, "0");
 
 }
 
@@ -227,27 +221,182 @@ setInterval(
 
 
 /* =========================================
+   SCROLL REVEAL
+========================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const revealElements =
+            document.querySelectorAll(
+                ".reveal:not(.story-reveal-left):not(.story-reveal-right)"
+            );
+
+
+        if (
+            !("IntersectionObserver" in window)
+        ) {
+
+            revealElements.forEach(
+                element => {
+
+                    element.classList.add(
+                        "visible"
+                    );
+
+                }
+            );
+
+            return;
+
+        }
+
+
+        const revealObserver =
+            new IntersectionObserver(
+                (entries, observer) => {
+
+                    entries.forEach(
+                        entry => {
+
+                            if (
+                                entry.isIntersecting
+                            ) {
+
+                                entry.target.classList.add(
+                                    "visible"
+                                );
+
+                                observer.unobserve(
+                                    entry.target
+                                );
+
+                            }
+
+                        }
+                    );
+
+                },
+                {
+                    threshold: 0.15,
+                    rootMargin:
+                        "0px 0px -40px 0px"
+                }
+            );
+
+
+        revealElements.forEach(
+            element => {
+
+                revealObserver.observe(
+                    element
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================
+   JOURNEY SIDE REVEAL
+========================================= */
+
+const storyRevealElements =
+    document.querySelectorAll(
+        ".story-reveal-left, .story-reveal-right"
+    );
+
+
+if (
+    storyRevealElements.length &&
+    ("IntersectionObserver" in window)
+) {
+
+    const storyRevealObserver =
+        new IntersectionObserver(
+            (entries, observer) => {
+
+                entries.forEach(
+                    entry => {
+
+                        if (
+                            entry.isIntersecting
+                        ) {
+
+                            entry.target.classList.add(
+                                "visible"
+                            );
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold: 0.15,
+                rootMargin:
+                    "0px 0px -50px 0px"
+            }
+        );
+
+
+    storyRevealElements.forEach(
+        element => {
+
+            storyRevealObserver.observe(
+                element
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================
    RSVP MODAL
 ========================================= */
 
-const rsvpModal =
-    document.getElementById("rsvpModal");
-
 const rsvpOpenButton =
-    document.getElementById("rsvpOpenButton");
+    document.getElementById(
+        "rsvpOpenButton"
+    );
+
+const rsvpModal =
+    document.getElementById(
+        "rsvpModal"
+    );
 
 const rsvpCloseButton =
-    document.getElementById("rsvpCloseButton");
+    document.getElementById(
+        "rsvpCloseButton"
+    );
 
-const rsvpModalBackdrop =
-    document.getElementById("rsvpModalBackdrop");
+const rsvpBackdrop =
+    rsvpModal
+        ? rsvpModal.querySelector(
+            ".rsvp-modal-backdrop"
+        )
+        : null;
 
 
 function openRsvpModal() {
 
-    if (!rsvpModal) return;
+    if (!rsvpModal) {
+        return;
+    }
 
-    rsvpModal.classList.add("active");
+    rsvpModal.classList.add(
+        "active"
+    );
 
     rsvpModal.setAttribute(
         "aria-hidden",
@@ -258,27 +407,14 @@ function openRsvpModal() {
         "rsvp-open"
     );
 
-
-    const nameInput =
-        document.getElementById("guestName");
-
-
-    if (nameInput) {
-
-        setTimeout(function () {
-
-            nameInput.focus();
-
-        }, 300);
-
-    }
-
 }
 
 
 function closeRsvpModal() {
 
-    if (!rsvpModal) return;
+    if (!rsvpModal) {
+        return;
+    }
 
     rsvpModal.classList.remove(
         "active"
@@ -316,9 +452,9 @@ if (rsvpCloseButton) {
 }
 
 
-if (rsvpModalBackdrop) {
+if (rsvpBackdrop) {
 
-    rsvpModalBackdrop.addEventListener(
+    rsvpBackdrop.addEventListener(
         "click",
         closeRsvpModal
     );
@@ -328,9 +464,13 @@ if (rsvpModalBackdrop) {
 
 document.addEventListener(
     "keydown",
-    function (event) {
+    event => {
 
-        if (event.key === "Escape") {
+        if (
+            event.key === "Escape" &&
+            rsvpModal &&
+            rsvpModal.classList.contains("active")
+        ) {
 
             closeRsvpModal();
 
@@ -341,114 +481,75 @@ document.addEventListener(
 
 
 /* =========================================
-   RSVP GOOGLE SHEET
+   RSVP FORM
 ========================================= */
+
+const rsvpForm =
+    document.getElementById(
+        "rsvpForm"
+    );
+
+const rsvpAttendance =
+    document.getElementById(
+        "rsvpAttendance"
+    );
+
+const rsvpAdditionalFields =
+    document.getElementById(
+        "rsvpAdditionalFields"
+    );
+
+const rsvpGuests =
+    document.getElementById(
+        "rsvpGuests"
+    );
+
+const rsvpMeal =
+    document.getElementById(
+        "rsvpMeal"
+    );
+
+const rsvpStatus =
+    document.getElementById(
+        "rsvpStatus"
+    );
+
 
 const RSVP_ENDPOINT =
     "https://script.google.com/macros/s/AKfycbyTcbqx2W1-inn8V0RXrtRIsxA_NvldqbI_SpB87pv1YmwGd4jaY70Sq2wNr-ZoZMKTTw/exec";
 
 
-const rsvpForm =
-    document.getElementById("rsvpForm");
-
-const rsvpStatus =
-    document.getElementById("rsvpStatus");
-
-const rsvpSubmit =
-    document.getElementById("rsvpSubmit");
-
-const attendanceInputs =
-    document.querySelectorAll(
-        'input[name="attendance"]'
-    );
-
-const guestCountField =
-    document.getElementById(
-        "guestCountField"
-    );
-
-const mealField =
-    document.getElementById(
-        "mealField"
-    );
-
-const guestCount =
-    document.getElementById(
-        "guestCount"
-    );
-
-const mealPreference =
-    document.getElementById(
-        "mealPreference"
-    );
-
-
 function updateRsvpFields() {
 
-    const selected =
-        document.querySelector(
-            'input[name="attendance"]:checked'
-        );
+    if (
+        !rsvpAttendance ||
+        !rsvpAdditionalFields
+    ) {
 
-
-    if (!selected) return;
-
-
-    const attending =
-        selected.value ===
-        "Joyfully accepting";
-
-
-    if (guestCountField) {
-
-        guestCountField.style.display =
-            attending
-                ? "flex"
-                : "none";
+        return;
 
     }
 
 
-    if (mealField) {
+    if (
+        rsvpAttendance.value ===
+        "Joyfully accepting"
+    ) {
 
-        mealField.style.display =
-            attending
-                ? "flex"
-                : "none";
-
-    }
-
-
-    if (!attending) {
-
-        if (guestCount) {
-            guestCount.value = "0";
-        }
-
-        if (mealPreference) {
-            mealPreference.value = "";
-        }
+        rsvpAdditionalFields.style.display =
+            "block";
 
     } else {
 
-        if (
-            guestCount &&
-            guestCount.value === "0"
-        ) {
+        rsvpAdditionalFields.style.display =
+            "none";
 
-            guestCount.value = "1";
-
+        if (rsvpGuests) {
+            rsvpGuests.value = "0";
         }
 
-
-        if (
-            mealPreference &&
-            !mealPreference.value
-        ) {
-
-            mealPreference.value =
-                "Prefer not to say";
-
+        if (rsvpMeal) {
+            rsvpMeal.value = "";
         }
 
     }
@@ -456,128 +557,104 @@ function updateRsvpFields() {
 }
 
 
-attendanceInputs.forEach(
-    function (input) {
+if (rsvpAttendance) {
 
-        input.addEventListener(
-            "change",
-            updateRsvpFields
-        );
+    rsvpAttendance.addEventListener(
+        "change",
+        updateRsvpFields
+    );
 
-    }
-);
+    updateRsvpFields();
+
+}
 
 
 if (rsvpForm) {
 
     rsvpForm.addEventListener(
         "submit",
-        async function (event) {
+        async event => {
 
             event.preventDefault();
 
 
-            const formData =
-                new FormData(rsvpForm);
-
-
-            const honeypot =
-                String(
-                    formData.get("website") || ""
-                ).trim();
-
-
-            if (honeypot) {
-                return;
-            }
-
-
-            const name =
-                String(
-                    formData.get("name") || ""
-                ).trim();
-
-
-            const attendance =
-                String(
-                    formData.get("attendance") || ""
-                ).trim();
-
-
-            const guests =
-                String(
-                    formData.get("guests") || "0"
-                ).trim();
-
-
-            const meal =
-                String(
-                    formData.get("meal") || ""
-                ).trim();
-
-
-            const message =
-                String(
-                    formData.get("message") || ""
-                ).trim();
-
-
-            if (!name || !attendance) {
+            if (rsvpStatus) {
 
                 rsvpStatus.textContent =
-                    "Please enter your name and RSVP.";
+                    "Sending your RSVP…";
 
-                rsvpStatus.className =
-                    "rsvp-status error";
+            }
+
+
+            const formData =
+                new FormData(
+                    rsvpForm
+                );
+
+
+            /*
+             * Honeypot protection
+             */
+
+            if (
+                String(
+                    formData.get("website") ||
+                    ""
+                ).trim()
+            ) {
 
                 return;
 
             }
 
 
-            const submission =
+            const params =
                 new URLSearchParams();
 
 
-            submission.append(
+            params.append(
                 "name",
-                name
+                String(
+                    formData.get("name") ||
+                    ""
+                ).trim()
             );
 
-            submission.append(
+
+            params.append(
                 "attendance",
-                attendance
+                String(
+                    formData.get("attendance") ||
+                    ""
+                ).trim()
             );
 
-            submission.append(
+
+            params.append(
                 "guests",
-                guests
+                String(
+                    formData.get("guests") ||
+                    "0"
+                ).trim()
             );
 
-            submission.append(
+
+            params.append(
                 "meal",
-                meal
+                String(
+                    formData.get("meal") ||
+                    ""
+                ).trim()
             );
 
-            submission.append(
+
+            params.append(
                 "message",
-                message
+                String(
+                    formData.get("message") ||
+                    ""
+                ).trim()
             );
-
-
-            rsvpSubmit.disabled = true;
-
-            rsvpSubmit.querySelector(
-                "span"
-            ).textContent =
-                "SENDING…";
-
-
-            rsvpStatus.textContent =
-                "";
-
-            rsvpStatus.className =
-                "rsvp-status";
 
 
             try {
@@ -586,65 +663,52 @@ if (rsvpForm) {
                     RSVP_ENDPOINT,
                     {
                         method: "POST",
-                        body: submission
+                        mode: "no-cors",
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+                        body:
+                            params.toString()
                     }
                 );
 
 
+                /*
+                 * Google Apps Script can redirect
+                 * the request, so the browser may not
+                 * expose the response. The request is
+                 * therefore treated as submitted here.
+                 */
+
+                if (rsvpStatus) {
+
+                    rsvpStatus.textContent =
+                        "Thank you. Your RSVP has been received ♥";
+
+                }
+
+
                 rsvpForm.reset();
 
                 updateRsvpFields();
-
-
-                rsvpStatus.textContent =
-                    "Thank you. Your RSVP has been received ♥";
-
-
-                rsvpStatus.className =
-                    "rsvp-status success";
 
 
             } catch (error) {
 
-                console.error(
-                    "RSVP submission error:",
-                    error
-                );
-
-
                 /*
-                 * Apps Script may complete the
-                 * submission even if the browser
-                 * cannot read the redirected response.
-                 *
-                 * The request is therefore treated
-                 * as submitted here, matching the
-                 * working setup already tested.
+                 * Keep the existing graceful behavior
+                 * for Apps Script browser restrictions.
                  */
 
-                rsvpForm.reset();
+                if (rsvpStatus) {
 
-                updateRsvpFields();
+                    rsvpStatus.textContent =
+                        "Thank you. Your RSVP has been received ♥";
 
-
-                rsvpStatus.textContent =
-                    "Thank you. Your RSVP has been received ♥";
-
-
-                rsvpStatus.className =
-                    "rsvp-status success";
+                }
 
             }
-
-
-            rsvpSubmit.disabled =
-                false;
-
-
-            rsvpSubmit.querySelector(
-                "span"
-            ).textContent =
-                "SUBMIT RSVP";
 
         }
     );
@@ -652,16 +716,287 @@ if (rsvpForm) {
 }
 
 
-updateRsvpFields();
+/* =========================================
+   OFFICIAL CLOUDINARY GALLERY
+========================================= */
+
+const officialGallery =
+    document.getElementById(
+        "officialGallery"
+    );
+
+
+const CLOUDINARY_CLOUD_NAME =
+    "deft8ujf";
+
+
+const GALLERY_TAG =
+    "official-wedding";
+
+
+async function loadOfficialGallery() {
+
+    if (!officialGallery) {
+        return;
+    }
+
+
+    const galleryUrl =
+        `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${GALLERY_TAG}.json`;
+
+
+    try {
+
+        const response =
+            await fetch(
+                galleryUrl
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Gallery unavailable"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const resources =
+            data.resources || [];
+
+
+        if (!resources.length) {
+
+            officialGallery.innerHTML = `
+                <p class="gallery-status">
+                    Our gallery will bloom here soon.
+                </p>
+            `;
+
+            return;
+
+        }
+
+
+        officialGallery.innerHTML =
+            "";
+
+
+        resources.forEach(
+            resource => {
+
+                const publicId =
+                    resource.public_id;
+
+
+                const format =
+                    resource.format ||
+                    "jpg";
+
+
+                const imageUrl =
+                    `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,c_fill/${publicId}.${format}`;
+
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.type =
+                    "button";
+
+                button.className =
+                    "gallery-item";
+
+
+                const image =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                image.src =
+                    imageUrl;
+
+                image.alt =
+                    "Justin and Tanya wedding memory";
+
+                image.loading =
+                    "lazy";
+
+
+                button.appendChild(
+                    image
+                );
+
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        openGalleryLightbox(
+                            imageUrl
+                        );
+
+                    }
+                );
+
+
+                officialGallery.appendChild(
+                    button
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        officialGallery.innerHTML = `
+            <p class="gallery-status">
+                Our gallery will bloom here soon.
+            </p>
+        `;
+
+    }
+
+}
+
+
+function openGalleryLightbox(
+    imageUrl
+) {
+
+    const lightbox =
+        document.createElement(
+            "div"
+        );
+
+
+    lightbox.className =
+        "gallery-lightbox";
+
+
+    const image =
+        document.createElement(
+            "img"
+        );
+
+
+    image.className =
+        "gallery-lightbox-image";
+
+    image.src =
+        imageUrl;
+
+    image.alt =
+        "Justin and Tanya wedding memory";
+
+
+    const closeButton =
+        document.createElement(
+            "button"
+        );
+
+
+    closeButton.className =
+        "gallery-lightbox-close";
+
+    closeButton.type =
+        "button";
+
+    closeButton.setAttribute(
+        "aria-label",
+        "Close image"
+    );
+
+    closeButton.textContent =
+        "×";
+
+
+    lightbox.appendChild(
+        image
+    );
+
+    lightbox.appendChild(
+        closeButton
+    );
+
+
+    document.body.appendChild(
+        lightbox
+    );
+
+
+    closeButton.addEventListener(
+        "click",
+        () => {
+
+            lightbox.remove();
+
+        }
+    );
+
+
+    lightbox.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                lightbox
+            ) {
+
+                lightbox.remove();
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function closeWithEscape(
+            event
+        ) {
+
+            if (
+                event.key === "Escape"
+            ) {
+
+                lightbox.remove();
+
+                document.removeEventListener(
+                    "keydown",
+                    closeWithEscape
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+loadOfficialGallery();
 
 
 /* =========================================
-   CLOUDINARY GUEST PHOTO UPLOAD
+   CLOUDINARY GUEST UPLOAD
 ========================================= */
 
-const uploadButton =
+const guestUploadButton =
     document.getElementById(
-        "uploadWidgetButton"
+        "guestUploadButton"
     );
 
 const uploadStatus =
@@ -670,17 +1005,14 @@ const uploadStatus =
     );
 
 
-let uploadWidget = null;
-
-
 if (
-    uploadButton &&
+    guestUploadButton &&
     typeof cloudinary !== "undefined"
 ) {
 
-    uploadWidget =
-        cloudinary.createUploadWidget(
 
+    const uploadWidget =
+        cloudinary.createUploadWidget(
             {
 
                 cloudName:
@@ -731,17 +1063,19 @@ if (
             },
 
 
-            function (error, result) {
+            (
+                error,
+                result
+            ) => {
 
                 if (error) {
 
-                    console.error(
-                        "Cloudinary upload error:",
-                        error
-                    );
+                    if (uploadStatus) {
 
-                    uploadStatus.textContent =
-                        "Something went wrong. Please try again.";
+                        uploadStatus.textContent =
+                            "Something went wrong. Please try again.";
+
+                    }
 
                     return;
 
@@ -750,33 +1084,48 @@ if (
 
                 if (
                     result &&
-                    result.event === "queues-start"
+                    result.event ===
+                    "queues-start"
                 ) {
 
-                    uploadStatus.textContent =
-                        "Uploading your beautiful moments…";
+                    if (uploadStatus) {
+
+                        uploadStatus.textContent =
+                            "Uploading your beautiful moments…";
+
+                    }
 
                 }
 
 
                 if (
                     result &&
-                    result.event === "success"
+                    result.event ===
+                    "success"
                 ) {
 
-                    uploadStatus.textContent =
-                        "Your photo has been shared with Justin & Tanya ♥";
+                    if (uploadStatus) {
+
+                        uploadStatus.textContent =
+                            "Your photo has been shared with Justin & Tanya ♥";
+
+                    }
 
                 }
 
 
                 if (
                     result &&
-                    result.event === "close"
+                    result.event ===
+                    "close"
                 ) {
 
-                    uploadStatus.textContent =
-                        "Thank you for sharing your memories ♥";
+                    if (uploadStatus) {
+
+                        uploadStatus.textContent =
+                            "Thank you for sharing your memories ♥";
+
+                    }
 
                 }
 
@@ -785,12 +1134,9 @@ if (
         );
 
 
-    uploadButton.addEventListener(
+    guestUploadButton.addEventListener(
         "click",
-        function () {
-
-            uploadStatus.textContent =
-                "";
+        () => {
 
             uploadWidget.open();
 
@@ -798,304 +1144,3 @@ if (
     );
 
 }
-
-
-/* =========================================
-   OFFICIAL WEDDING GALLERY
-========================================= */
-
-const galleryGrid =
-    document.getElementById(
-        "galleryGrid"
-    );
-
-const galleryStatus =
-    document.getElementById(
-        "galleryStatus"
-    );
-
-
-const CLOUDINARY_CLOUD_NAME =
-    "deft8ujf";
-
-
-const GALLERY_TAG =
-    "official-wedding";
-
-
-async function loadWeddingGallery() {
-
-    if (!galleryGrid) return;
-
-
-    const listUrl =
-        `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${GALLERY_TAG}.json`;
-
-
-    try {
-
-        const response =
-            await fetch(listUrl);
-
-
-        if (!response.ok) {
-            throw new Error(
-                "Gallery request failed."
-            );
-        }
-
-
-        const data =
-            await response.json();
-
-
-        const resources =
-            Array.isArray(data.resources)
-                ? data.resources
-                : [];
-
-
-        if (!resources.length) {
-
-            galleryStatus.textContent =
-                "Our gallery will bloom here soon.";
-
-            return;
-
-        }
-
-
-        galleryGrid.innerHTML =
-            "";
-
-
-        galleryStatus.textContent =
-            "";
-
-
-        resources.forEach(
-            function (resource) {
-
-                const item =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                item.className =
-                    "gallery-item";
-
-                item.type =
-                    "button";
-
-
-                const image =
-                    document.createElement(
-                        "img"
-                    );
-
-
-                const imageUrl =
-                    `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200,c_fill/${resource.public_id}.${resource.format}`;
-
-
-                image.src =
-                    imageUrl;
-
-                image.alt =
-                    "Justin and Tanya wedding moment";
-
-                image.loading =
-                    "lazy";
-
-
-                item.appendChild(
-                    image
-                );
-
-
-                item.addEventListener(
-                    "click",
-                    function () {
-
-                        openGalleryLightbox(
-                            imageUrl
-                        );
-
-                    }
-                );
-
-
-                galleryGrid.appendChild(
-                    item
-                );
-
-            }
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Gallery error:",
-            error
-        );
-
-
-        galleryStatus.textContent =
-            "Our gallery will bloom here soon.";
-
-    }
-
-}
-
-
-loadWeddingGallery();
-
-
-/* =========================================
-   GALLERY LIGHTBOX
-========================================= */
-
-function openGalleryLightbox(
-    imageUrl
-) {
-
-    let lightbox =
-        document.getElementById(
-            "galleryLightbox"
-        );
-
-
-    if (!lightbox) {
-
-        lightbox =
-            document.createElement(
-                "div"
-            );
-
-
-        lightbox.id =
-            "galleryLightbox";
-
-        lightbox.className =
-            "gallery-lightbox";
-
-
-        const image =
-            document.createElement(
-                "img"
-            );
-
-
-        image.className =
-            "gallery-lightbox-image";
-
-
-        const close =
-            document.createElement(
-                "button"
-            );
-
-
-        close.className =
-            "gallery-lightbox-close";
-
-        close.type =
-            "button";
-
-        close.setAttribute(
-            "aria-label",
-            "Close photo"
-        );
-
-        close.textContent =
-            "×";
-
-
-        lightbox.appendChild(
-            image
-        );
-
-        lightbox.appendChild(
-            close
-        );
-
-
-        document.body.appendChild(
-            lightbox
-        );
-
-
-        close.addEventListener(
-            "click",
-            closeGalleryLightbox
-        );
-
-
-        lightbox.addEventListener(
-            "click",
-            function (event) {
-
-                if (
-                    event.target ===
-                    lightbox
-                ) {
-
-                    closeGalleryLightbox();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    const image =
-        lightbox.querySelector(
-            ".gallery-lightbox-image"
-        );
-
-
-    image.src =
-        imageUrl;
-
-
-    lightbox.classList.add(
-        "active"
-    );
-
-}
-
-
-function closeGalleryLightbox() {
-
-    const lightbox =
-        document.getElementById(
-            "galleryLightbox"
-        );
-
-
-    if (!lightbox) return;
-
-
-    lightbox.classList.remove(
-        "active"
-    );
-
-}
-
-
-document.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key === "Escape") {
-
-            closeGalleryLightbox();
-
-        }
-
-    }
-);
